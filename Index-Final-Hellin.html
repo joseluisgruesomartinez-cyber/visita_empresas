@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Visitas a centros de trabajo - Rutas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Public+Sans:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#1b1f24;--mut:#5d6672;--line:#dde1e6;--red:#d4001a;--redbg:#fde8eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181c;--card:#1e2228;--ink:#eceff3;--mut:#9aa4b0;--line:#323943;--red:#ff4d62;--redbg:#3a1a20}}
+:root[data-theme="dark"]{--bg:#15181c;--card:#1e2228;--ink:#eceff3;--mut:#9aa4b0;--line:#323943;--red:#ff4d62;--redbg:#3a1a20}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.top{background:#d4001a;color:#fff;border-bottom:4px solid #1b1f24}.top div{max-width:1080px;margin:0 auto;padding:14px 16px 12px}
+.top b{display:block;font:400 clamp(26px,6vw,38px)/1 "Archivo Black","Arial Black",Impact,sans-serif;letter-spacing:.01em}.top span{display:block;margin-top:6px;font-weight:600;font-size:13.5px;opacity:.95}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 140px}
+h1{font-size:26px;font-weight:800;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 16px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0 12px;z-index:5;border-bottom:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+input,select,button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-height:40px}
+input{flex:1 1 240px}
+select{flex:1 1 150px;max-width:100%}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.seg{display:flex;gap:0;margin-top:8px;align-items:center;flex-wrap:wrap;gap:8px}
+.seg span{color:var(--mut)}
+.seg button{border-radius:999px;padding:6px 14px;min-height:34px}
+.seg button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.sp{flex:1}
+.count{margin:14px 0 4px;color:var(--mut);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px}
+.g{margin-top:18px}
+.g h2{font-size:17px;font-weight:800;margin:0 0 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.g h2 b{font-weight:600;font-size:13px;color:var(--red);background:var(--redbg);border-radius:999px;padding:1px 10px}
+.g-actions{display:flex;gap:6px}
+.g-actions button{font-size:13px;min-height:32px;padding:5px 10px}
+.it{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr auto;gap:2px 12px;transition:border-color .15s}
+.it.selected{border-left-color:#111;border-color:#111}
+.it .chk{display:flex;align-items:flex-start;padding-top:2px}
+.it .chk input{width:18px;height:18px;min-height:auto}
+.it .n{font-weight:600;display:flex;gap:8px;align-items:center}
+.it .badge{font-size:11px;background:var(--ink);color:var(--bg);border-radius:999px;padding:1px 7px;font-weight:800}
+.it .e,.it .m{color:var(--mut);font-size:13.5px}
+.it .d{text-align:right;font-size:13.5px;white-space:nowrap}
+.it .d small{display:block;color:var(--mut)}
+.it .l{grid-column:2/-1;font-size:13.5px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.it a{color:var(--red);font-weight:600;text-decoration:none;white-space:nowrap}.it a:hover,.it a:focus-visible{text-decoration:underline}
+.vacio{padding:32px 0;text-align:center;color:var(--mut)}
+.route-panel{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:3px solid var(--red);box-shadow:0 -8px 24px rgba(0,0,0,.15);z-index:50;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;max-width:1080px;margin:0 auto}
+.route-panel b{font-weight:800}
+.route-panel .meta{font-size:13px;color:var(--mut);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.route-panel .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.route-panel .actions button{border-radius:999px;font-weight:600}
+.route-panel .actions button.primary{background:var(--red);color:#fff;border-color:var(--red)}
+.progress{height:4px;background:var(--line);border-radius:999px;overflow:hidden;width:100%}
+.progress div{height:100%;background:var(--red);transition:width .3s}
+@media (max-width:640px){.it{grid-template-columns:28px 1fr}.it .d{text-align:left;grid-column:2}.route-panel{flex-direction:column;align-items:stretch}.route-panel .actions{margin-left:0}}
+</style>
+</head>
+<body>
+<header class="top"><div><b>FeSMC UGT CLM</b><span>Federación de Servicios, Movilidad y Consumo · Castilla-La Mancha — Rutas por cercanía</span></div></header>
+<div class="wrap">
+<h1>Visitas a centros de trabajo</h1>
+<p class="sub" id="sub"></p>
+<div class="bar">
+ <div class="row">
+  <input id="q" type="search" placeholder="Buscar empresa, calle o polígono" aria-label="Buscar">
+  <select id="fp" aria-label="Provincia" hidden></select>
+  <select id="fc" aria-label="Comarca"></select>
+  <select id="fz" aria-label="Zona"></select>
+  <select id="fs" aria-label="Sector"></select>
+  <select id="fa" aria-label="Año de votación"></select>
+ </div>
+ <div class="seg" id="seg"><span>Agrupar por</span>
+  <button data-g="z" aria-pressed="true">Zona</button><button data-g="s" aria-pressed="false">Sector</button><button data-g="" aria-pressed="false">Sin agrupar</button>
+  <i class="sp"></i><button id="rs">Limpiar filtros</button><button id="cp">Copiar listado</button>
+ </div>
+</div>
+<div class="count" id="ct" aria-live="polite"></div>
+<div id="out"></div>
+</div>
+
+<div id="routePanel" class="route-panel" hidden>
+  <div style="display:flex;flex-direction:column;gap:4px;flex:1">
+    <div><b id="routeTitle">Mi ruta: 0 centros</b> <span id="routeDist" class="pill" hidden></span></div>
+    <div class="meta" id="routeMeta">Selecciona centros para crear ruta optimizada</div>
+    <div class="progress" id="routeProgress" hidden><div id="routeProgressBar" style="width:0%"></div></div>
+  </div>
+  <div class="actions">
+    <button id="btnLocate" style="background:#111;color:#fff;border-color:#111">📍 Usar mi ubicación (Hellín, etc.)</button><button id="btnOpt" class="primary">Ordenar por cercanía</button>
+    <button id="btnMaps" class="primary">Abrir en Google Maps</button>
+    <button id="btnCopyRoute">Copiar ruta</button>
+    <button id="btnClearRoute">Limpiar</button>
+  </div>
+</div>
+
+<script>
+let D=[];
+const $=id=>document.getElementById(id);
+const fmt=i=>i.split('-').reverse().join('/');
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+let grp='z';
+let selected=new Map(); // id -> centro
+let currentPos=null; // {lat,lon} de mi ubicación actual
+let geoCache={};
+try{geoCache=JSON.parse(localStorage.getItem('geoCache')||'{}')}catch(e){geoCache={}}
+let last=[];
+
+function opts(el,all,list){el.innerHTML='<option value="">'+all+'</option>'+list.map(([v,c])=>'<option value="'+v+'">'+v+' ('+c+')</option>').join('')}
+function tally(arr,f){const m={};arr.forEach(x=>{const v=f(x);(Array.isArray(v)?v:[v]).forEach(y=>{if(!y)return;m[y]=(m[y]||0)+1})});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function build(){
+ const cur={z:$('fz').value};
+ const base=D.filter(x=>(!$('fp').value||x.pv===$('fp').value)&&(!$('fc').value||x.c===$('fc').value));
+ opts($('fz'),'Todas las zonas',tally(base,x=>x.z));
+ $('fz').value=base.some(x=>x.z===cur.z)?cur.z:'';
+}
+function init(){
+ const pv=tally(D,x=>x.pv);if(pv.length>1){opts($('fp'),'Todas las provincias',pv);$('fp').hidden=false}
+ opts($('fc'),'Todas las comarcas',tally(D,x=>x.c));
+ opts($('fs'),'Todos los sectores',tally(D,x=>x.s));
+ opts($('fa'),'Cualquier año',tally(D,x=>[...new Set(x.f.map(d=>d.slice(0,4)))]).sort((a,b)=>b[0]-a[0]));
+ build();
+}
+function filtered(){
+ const q=norm($('q').value.trim()),p=$('fp').value,c=$('fc').value,z=$('fz').value,s=$('fs').value,a=$('fa').value;
+ return D.filter(x=>(!q||q.split(/\s+/).every(w=>x.k.includes(w)))&&(!p||x.pv===p)&&(!c||x.c===c)&&(!z||x.z===z)&&(!s||x.s===s)&&(!a||x.f.some(d=>d.startsWith(a))));
+}
+function esc(t){return String(t).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function mapaQuery(x){return x.a+', '+x.m+', '+x.pv+', España'}
+function mapaUrl(x){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(mapaQuery(x))}
+function geoKey(x){return (x.a+'|'+x.m).toLowerCase()}
+
+function hav(a,b){
+ if(!a||!b||a.lat==null||b.lat==null) return Infinity;
+ const R=6371, dLat=(b.lat-a.lat)*Math.PI/180, dLon=(b.lon-a.lon)*Math.PI/180;
+ const la1=a.lat*Math.PI/180, la2=b.lat*Math.PI/180;
+ const h=Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
+ return 2*R*Math.asin(Math.sqrt(h));
+}
+
+async function geocodeOne(x, onProgress){
+ const key=geoKey(x);
+ if(geoCache[key] && geoCache[key].lat!=null){ x._geo=geoCache[key]; return x._geo; }
+ try{
+  const q=mapaQuery(x);
+  const url=`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
+  const r=await fetch(url,{headers:{'Accept-Language':'es'}});
+  if(r.ok){
+   const j=await r.json();
+   if(j && j[0]){ const g={lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon)}; geoCache[key]=g; x._geo=g; localStorage.setItem('geoCache', JSON.stringify(geoCache)); return g; }
+  }
+ }catch(e){}
+ geoCache[key]={lat:null,lon:null}; localStorage.setItem('geoCache', JSON.stringify(geoCache)); x._geo={lat:null,lon:null}; return x._geo;
+}
+
+async function geocodeMany(list, statusEl, progressBar){
+ let done=0;
+ const total=list.length;
+ for(let i=0;i<list.length;i++){
+  const x=list[i];
+  if(!x._geo){ await geocodeOne(x); if(i<total-1) await new Promise(r=>setTimeout(r,1100)); }
+  done++;
+  if(statusEl) statusEl.textContent=`Geocodificando ${done}/${total}... (${Object.keys(geoCache).length} en cache)`;
+  if(progressBar) progressBar.style.width=`${done/total*100}%`;
+ }
+}
+
+function orderByProximity(list, originPos=null){
+ // originPos = {lat,lon} si queremos partir desde mi ubicación, null = modo centroide anterior
+ if(list.length<=1) return list;
+ let startPoint = originPos; // si hay origen GPS, partimos de ahí
+ // ensure all have _geo (may be null)
+ const withGeo=list.filter(x=>x._geo && x._geo.lat!=null);
+ const withoutGeo=list.filter(x=>!x._geo || x._geo.lat==null);
+ if(withGeo.length<=1) return [...withGeo,...withoutGeo].length ? [...withGeo.sort((a,b)=>a.a.localeCompare(b.a)),...withoutGeo] : list;
+
+ // si hay origen GPS, empezamos por el más cercano a mi posición
+ let start;
+ if(originPos && originPos.lat!=null){
+   start=withGeo.reduce((best,x)=>{ const d=hav(originPos, x._geo); return (!best||d<best.d)?{x,d}:best }, null).x;
+ } else {
+   // modo antiguo: punto más céntrico del cluster
+   let centerLat=withGeo.reduce((s,x)=>s+x._geo.lat,0)/withGeo.length;
+   let centerLon=withGeo.reduce((s,x)=>s+x._geo.lon,0)/withGeo.length;
+   start=withGeo.reduce((best,x)=>{ const d=hav({lat:centerLat,lon:centerLon}, x._geo); return (!best||d<best.d)?{x,d}:best }, null).x;
+ }
+
+ let ordered=[start];
+ let remaining=withGeo.filter(x=>x!==start);
+ while(remaining.length){
+  let last=ordered[ordered.length-1];
+  let next=remaining.reduce((best,x)=>{ const d=hav(last._geo,x._geo); return (!best||d<best.d)?{x,d}:best }, null);
+  ordered.push(next.x);
+  remaining=remaining.filter(x=>x!==next.x);
+ }
+ return [...ordered,...withoutGeo];
+}
+
+function totalDist(list){
+ // distancia entre centros (sin contar origen). El origen se suma aparte
+ let d=0;
+ for(let i=1;i<list.length;i++) d+=hav(list[i-1]._geo, list[i]._geo);
+ return d;
+}
+
+function buildMapsUrl(list, originPos=null){
+ if(!list.length) return '#';
+ if(list.length===1 && !originPos) return mapaUrl(list[0]);
+ let limited=list.slice(0,10);
+ let o;
+ if(originPos && originPos.lat!=null){ o=`${originPos.lat},${originPos.lon}`; } else { o=mapaQuery(limited[0]); }
+ let de=mapaQuery(limited[limited.length-1]);
+ if(list.length===1 && originPos) de=mapaQuery(list[0]);
+ else if(list.length>1 && !originPos) { /* ya definido */ } 
+ // Si solo hay origen GPS y 1 destino, origin=GPS, dest=ese
+ let wp='';
+ if(list.length>1){
+   if(originPos) wp=limited.slice(0,-1).map(x=>encodeURIComponent(mapaQuery(x))).join('|');
+   else wp=limited.slice(1,-1).map(x=>encodeURIComponent(mapaQuery(x))).join('|');
+ } else if(list.length===1 && originPos){ wp=''; }
+ let url=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(de)}&travelmode=driving`;
+ if(wp) url+=`&waypoints=${wp}`;
+ return url;
+}
+
+function card(x){
+ const sel=selected.has(x.id);
+ const idx=sel ? [...selected.values()].findIndex(v=>v.id===x.id) : -1;
+ const ant=x.f.length>1?'<small>+'+(x.f.length-1)+' anterior'+(x.f.length>2?'es':'')+': '+x.f.slice(1).map(fmt).join(', ')+'</small>':'';
+ const geoBadge=x._geo && x._geo.lat!=null?'<span class="pill" style="background:var(--redbg);color:var(--red)">📍</span>':'';
+ return `<article class="it ${sel?'selected':''}"><div class="chk"><input type="checkbox" ${sel?'checked':''} data-id="${x.id}" aria-label="Añadir ${esc(x.n)}"></div><div><div class="n">${esc(x.n)} ${sel?`<span class="badge">#${idx+1}</span>`:''} ${geoBadge}</div>${(x.e&&x.e!==x.n?'<div class="e">'+esc(x.e)+'</div>':'')}</div><div class="d">Votación ${fmt(x.f[0])}${ant}</div><div class="l">${esc(x.s)}${x.u?' › '+esc(x.u):''}<span class="pill">${esc(x.c)} · ${esc(x.pv)}</span> ${esc(x.a)}, ${esc(x.m)}${x.z!==x.m?' · '+esc(x.z):''} · ${esc(x.t)}${x.p?' · '+esc(x.p):''} · <a href="${mapaUrl(x)}" target="_blank" rel="noopener">Ver en Google Maps</a></div></article>`;
+}
+
+function render(){
+ const r=filtered();last=[];
+ const ctEl=$('ct');
+ ctEl.innerHTML=`<span><strong>${r.length}</strong> ${r.length===1?'centro':'centros'} de ${D.length}</span> ${selected.size?`<span class="pill" style="background:var(--red);color:#fff">Ruta: ${selected.size}</span>`:''} <span class="pill">Cache geo: ${Object.keys(geoCache).length}</span>`;
+ if(!r.length){$('out').innerHTML='<div class="vacio">Ningún centro coincide. Prueba a quitar algún filtro.</div>';return}
+ r.sort((a,b)=>a.n.localeCompare(b.n,'es'));
+ let html='';
+ if(!grp){last=[['',r]];html=r.map(card).join('')}
+ else{const m={};r.forEach(x=>(m[x[grp]]=m[x[grp]]||[]).push(x));
+  last=Object.entries(m).sort((a,b)=>b[1].length-a[1].length);
+  html=last.map(([k,v])=>`<section class="g"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2>${esc(k)}<b>${v.length}</b></h2><div class="g-actions"><button data-add-zone="${esc(k)}">Añadir zona (${v.length})</button><button data-route-zone="${esc(k)}" class="primary" style="background:var(--red);color:#fff;border-color:var(--red)">Ruta optimizada</button></div></div>${v.map(card).join('')}</section>`).join('')}
+ $('out').innerHTML=html;
+ // bind checkboxes
+ $('out').querySelectorAll('input[type="checkbox"][data-id]').forEach(cb=>{
+  cb.addEventListener('change',()=>{
+   const id=cb.dataset.id;
+   const centro=D.find(x=>x.id===id);
+   if(cb.checked) selected.set(id,centro); else selected.delete(id);
+   updateRoutePanel(); render();
+  })
+ });
+ $('out').querySelectorAll('[data-add-zone]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+   const zone=btn.getAttribute('data-add-zone');
+   const items=r.filter(x=>x[grp]===zone);
+   items.forEach(x=>selected.set(x.id,x));
+   updateRoutePanel(); render();
+  })
+ });
+ $('out').querySelectorAll('[data-route-zone]').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+   const zone=btn.getAttribute('data-route-zone');
+   const items=r.filter(x=>x[grp]===zone);
+   selected.clear(); items.forEach(x=>selected.set(x.id,x));
+   updateRoutePanel();
+   await optimizeAndUpdate();
+   render();
+  })
+ });
+}
+
+function updateRoutePanel(){
+ const locInfo=currentPos?`📍 Origen: tu ubicación ${currentPos.lat.toFixed(4)},${currentPos.lon.toFixed(4)}`:'📍 Origen: centro del grupo (pulsa Usar mi ubicación si vienes de Hellín)';
+ const panel=$('routePanel');
+ if(!selected.size){ panel.hidden=true; return; }
+ panel.hidden=false;
+ $('routeTitle').textContent=`Mi ruta: ${selected.size} centros`;
+ const list=[...selected.values()];
+ const withGeo=list.filter(x=>x._geo && x._geo.lat!=null);
+ if(withGeo.length>1){
+  const d=totalDist(list);
+  if(isFinite(d) && d>0){ $('routeDist').hidden=false; $('routeDist').textContent=`~${d.toFixed(1)} km`; }
+ }
+ $('routeMeta').textContent=(locInfo+' — ')+(selected.size>10 ? `Google Maps solo permite 10 paradas: primer tramo de ${selected.size}.` : `${selected.size} centros. Pulsa "Ordenar por cercanía" para optimizar.`);
+}
+
+async function optimizeAndUpdate(){
+ const list=[...selected.values()];
+ if(!list.length) return;
+ const meta=$('routeMeta'); const bar=$('routeProgress'); const barInner=$('routeProgressBar');
+ bar.hidden=false; meta.textContent='Geocodificando direcciones...';
+ await geocodeMany(list, meta, barInner);
+ const ordered=orderByProximity(list, currentPos);
+ selected.clear(); ordered.forEach(x=>selected.set(x.id,x));
+ let d=totalDist(ordered);
+   if(currentPos && ordered[0] && ordered[0]._geo) d+=hav(currentPos, ordered[0]._geo);
+ $('routeDist').hidden=false; $('routeDist').textContent=`~${d.toFixed(1)} km optimizada`;
+ meta.textContent=`Ruta optimizada por cercanía real. ${ordered.filter(x=>x._geo&&x._geo.lat!=null).length} geolocalizados de ${ordered.length}.`;
+ bar.hidden=true;
+ updateRoutePanel(); render();
+}
+
+['q','fz','fs','fa'].forEach(i=>$(i).addEventListener('input',render));
+['fp','fc'].forEach(i=>$(i).addEventListener('input',()=>{build();render()}));
+$('seg').addEventListener('click',e=>{const b=e.target.closest('button[data-g]');if(!b)return;grp=b.dataset.g;$('seg').querySelectorAll('button[data-g]').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+$('rs').onclick=()=>{$('q').value='';['fp','fc','fs','fa'].forEach(i=>$(i).value='');build();render()};
+$('cp').onclick=async()=>{
+ const t=last.map(([k,v])=>(k?k.toUpperCase()+'\n':'')+v.map(x=>'- '+x.n+' | '+x.a+', '+x.m+' | '+x.s+' | votación '+fmt(x.f[0])).join('\n')).join('\n\n');
+ try{await navigator.clipboard.writeText(t);$('cp').textContent='Copiado'}catch(e){$('cp').textContent='No se pudo copiar'}
+ setTimeout(()=>$('cp').textContent='Copiar listado',1800)};
+
+$('btnClearRoute').onclick=()=>{selected.clear(); updateRoutePanel(); render();};
+$('btnCopyRoute').onclick=async()=>{
+ const list=[...selected.values()];
+ const t=list.map((x,i)=>`${i+1}. ${x.n} | ${x.a}, ${x.m} | ${x.z} | ${x.s} | votación ${fmt(x.f[0])} | ${mapaQuery(x)}`).join('\n');
+ try{await navigator.clipboard.writeText(t); $('btnCopyRoute').textContent='Copiado'; setTimeout(()=>$('btnCopyRoute').textContent='Copiar ruta',1500);}catch(e){}
+};
+$('btnLocate').onclick=async()=>{
+ const btn=$('btnLocate'); btn.textContent='Obteniendo ubicación...'; btn.disabled=true;
+ if(!navigator.geolocation){ alert('Tu navegador no soporta geolocalización'); btn.textContent='📍 Usar mi ubicación'; btn.disabled=false; return; }
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  currentPos={lat:pos.coords.latitude, lon:pos.coords.longitude};
+  btn.textContent=`📍 Origen activo (${currentPos.lat.toFixed(2)}, ${currentPos.lon.toFixed(2)})`;
+  btn.style.background='var(--red)';
+  btn.disabled=false;
+  // geocodifica y reordena automáticamente desde tu posición
+  await optimizeAndUpdate();
+ }, err=>{
+  alert('No se pudo obtener ubicación: '+err.message+'\nActiva el GPS y permite la ubicación.');
+  btn.textContent='📍 Usar mi ubicación'; btn.disabled=false;
+ }, {enableHighAccuracy:true, timeout:10000});
+};
+$('btnOpt').onclick=optimizeAndUpdate;
+$('btnMaps').onclick=()=>{
+ const list=[...selected.values()];
+ if(!list.length) return;
+ if(list.length>10){ alert('Google Maps solo permite 10 paradas por enlace. Se abrirá el primer tramo.'); }
+ window.open(buildMapsUrl(list.slice(0,10), currentPos), '_blank');
+};
+
+fetch('centros.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{
+ D=j.centros;
+ D.forEach((x,i)=>{
+   x.id=String(i)+'_'+(x.n+'_'+x.a).toLowerCase();
+   const k=geoKey(x);
+   if(geoCache[k]) x._geo=geoCache[k];
+   x.k=norm([x.n,x.e,x.a,x.z,x.s,x.u,x.m].join(' '));
+ });
+ const ps=[...new Set(D.map(x=>x.pv))].join(', ');
+ document.title='Visitas a centros de trabajo · '+ps;
+ $('sub').textContent=D.length+' centros con elecciones registradas ('+ps+'), desde '+fmt(D.reduce((m,x)=>x.f[x.f.length-1]<m?x.f[x.f.length-1]:m,'9999'))+'. Datos a '+fmt(j.generado)+'. Selecciona centros para rutas por cercanía.';
+ init();render();updateRoutePanel();
+}).catch(()=>{$('out').innerHTML='<div class="vacio">No se pudo cargar centros.json. Debe estar en la misma carpeta que esta página y servirse desde un servidor web.</div>'});
+</script>
+</body>
+</html>
