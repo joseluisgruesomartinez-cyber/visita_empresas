@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Visitas a centros de trabajo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Public+Sans:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#1b1f24;--mut:#5d6672;--line:#dde1e6;--red:#d4001a;--redbg:#fde8eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181c;--card:#1e2228;--ink:#eceff3;--mut:#9aa4b0;--line:#323943;--red:#ff4d62;--redbg:#3a1a20}}
+:root[data-theme="dark"]{--bg:#15181c;--card:#1e2228;--ink:#eceff3;--mut:#9aa4b0;--line:#323943;--red:#ff4d62;--redbg:#3a1a20}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.top{background:#d4001a;color:#fff;border-bottom:4px solid #1b1f24}.top div{max-width:980px;margin:0 auto;padding:14px 16px 12px}
+.top b{display:block;font:400 clamp(26px,6vw,38px)/1 "Archivo Black","Arial Black",Impact,sans-serif;letter-spacing:.01em}.top span{display:block;margin-top:6px;font-weight:600;font-size:13.5px;opacity:.95}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;font-weight:800;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 16px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0 12px;z-index:5;border-bottom:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+input,select,button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-height:40px}
+input{flex:1 1 240px}
+select{flex:1 1 150px;max-width:100%}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.seg{display:flex;gap:0;margin-top:8px;align-items:center;flex-wrap:wrap;gap:8px}
+.seg span{color:var(--mut)}
+.seg button{border-radius:999px;padding:6px 14px;min-height:34px}
+.seg button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.sp{flex:1}
+.count{margin:14px 0 4px;color:var(--mut)}
+.g{margin-top:18px}
+.g h2{font-size:17px;font-weight:800;margin:0 0 8px;display:flex;align-items:baseline;gap:10px}
+.g h2 b{font-weight:600;font-size:13px;color:var(--red);background:var(--redbg);border-radius:999px;padding:1px 10px}
+.it{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:2px 16px}
+.it .n{font-weight:600}
+.it .e,.it .m{color:var(--mut);font-size:13.5px}
+.it .d{text-align:right;font-size:13.5px;white-space:nowrap}
+.it .d small{display:block;color:var(--mut)}
+.it .l{grid-column:1/-1;font-size:13.5px}
+.it a{color:var(--red);font-weight:600;text-decoration:none;white-space:nowrap}.it a:hover,.it a:focus-visible{text-decoration:underline}
+.vacio{padding:32px 0;text-align:center;color:var(--mut)}
+@media (max-width:560px){.it{grid-template-columns:1fr}.it .d{text-align:left}}
+</style>
+</head>
+<body>
+<header class="top"><div><b>FeSMC UGT CLM</b><span>Federación de Servicios, Movilidad y Consumo · Castilla-La Mancha</span></div></header>
+<div class="wrap">
+<h1>Visitas a centros de trabajo</h1>
+<p class="sub" id="sub"></p>
+<div class="bar">
+ <div class="row">
+  <input id="q" type="search" placeholder="Buscar empresa, calle o polígono" aria-label="Buscar">
+  <select id="fp" aria-label="Provincia" hidden></select>
+  <select id="fc" aria-label="Comarca"></select>
+  <select id="fz" aria-label="Zona"></select>
+  <select id="fs" aria-label="Sector"></select>
+  <select id="fa" aria-label="Año de votación"></select>
+ </div>
+ <div class="seg" id="seg"><span>Agrupar por</span>
+  <button data-g="z" aria-pressed="true">Zona</button><button data-g="s" aria-pressed="false">Sector</button><button data-g="" aria-pressed="false">Sin agrupar</button>
+  <i class="sp"></i><button id="rs">Limpiar filtros</button><button id="cp">Copiar listado</button>
+ </div>
+</div>
+<div class="count" id="ct" aria-live="polite"></div>
+<div id="out"></div>
+</div>
+<script>
+let D=[];
+const $=id=>document.getElementById(id);
+const fmt=i=>i.split('-').reverse().join('/');
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+let grp='z';
+function opts(el,all,list){el.innerHTML='<option value="">'+all+'</option>'+list.map(([v,c])=>'<option value="'+v+'">'+v+' ('+c+')</option>').join('')}
+function tally(arr,f){const m={};arr.forEach(x=>{const v=f(x);(Array.isArray(v)?v:[v]).forEach(y=>m[y]=(m[y]||0)+1)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function build(){
+ const cur={z:$('fz').value};
+ const base=D.filter(x=>(!$('fp').value||x.pv===$('fp').value)&&(!$('fc').value||x.c===$('fc').value));
+ opts($('fz'),'Todas las zonas',tally(base,x=>x.z));
+ $('fz').value=base.some(x=>x.z===cur.z)?cur.z:'';
+}
+function init(){
+ const pv=tally(D,x=>x.pv);if(pv.length>1){opts($('fp'),'Todas las provincias',pv);$('fp').hidden=false}
+ opts($('fc'),'Todas las comarcas',tally(D,x=>x.c));
+ opts($('fs'),'Todos los sectores',tally(D,x=>x.s));
+ opts($('fa'),'Cualquier año',tally(D,x=>[...new Set(x.f.map(d=>d.slice(0,4)))]).sort((a,b)=>b[0]-a[0]));
+ build();
+}
+function filtered(){
+ const q=norm($('q').value.trim()),p=$('fp').value,c=$('fc').value,z=$('fz').value,s=$('fs').value,a=$('fa').value;
+ return D.filter(x=>(!q||q.split(/\s+/).every(w=>x.k.includes(w)))&&(!p||x.pv===p)&&(!c||x.c===c)&&(!z||x.z===z)&&(!s||x.s===s)&&(!a||x.f.some(d=>d.startsWith(a))));
+}
+function esc(t){return String(t).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function mapa(x){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(x.a+', '+x.m+', '+x.pv+', España')}
+function card(x){
+ const ant=x.f.length>1?'<small>+'+(x.f.length-1)+' anterior'+(x.f.length>2?'es':'')+': '+x.f.slice(1).map(fmt).join(', ')+'</small>':'';
+ return '<article class="it"><div><div class="n">'+esc(x.n)+'</div>'+(x.e&&x.e!==x.n?'<div class="e">'+esc(x.e)+'</div>':'')+'</div>'
+ +'<div class="d">Votación '+fmt(x.f[0])+ant+'</div>'
+ +'<div class="l">'+esc(x.s)+(x.u?' › '+esc(x.u):'')+'</div>'
+ +'<div class="m">'+esc(x.a)+', '+esc(x.m)+(x.z!==x.m?' · '+esc(x.z):'')+' · '+esc(x.t)+(x.p?' · '+esc(x.p):'')+' · <a href="'+mapa(x)+'" target="_blank" rel="noopener">Ver en Google Maps</a></div></article>';
+}
+let last=[];
+function render(){
+ const r=filtered();last=[];
+ $('ct').textContent=r.length+(r.length===1?' centro':' centros')+' de '+D.length;
+ if(!r.length){$('out').innerHTML='<div class="vacio">Ningún centro coincide. Prueba a quitar algún filtro.</div>';return}
+ r.sort((a,b)=>a.n.localeCompare(b.n,'es'));
+ let html='';
+ if(!grp){last=[['',r]];html=r.map(card).join('')}
+ else{const m={};r.forEach(x=>(m[x[grp]]=m[x[grp]]||[]).push(x));
+  last=Object.entries(m).sort((a,b)=>b[1].length-a[1].length);
+  html=last.map(([k,v])=>'<section class="g"><h2>'+esc(k)+'<b>'+v.length+'</b></h2>'+v.map(card).join('')+'</section>').join('')}
+ $('out').innerHTML=html;
+}
+['q','fz','fs','fa'].forEach(i=>$(i).addEventListener('input',render));
+['fp','fc'].forEach(i=>$(i).addEventListener('input',()=>{build();render()}));
+$('seg').addEventListener('click',e=>{const b=e.target.closest('button[data-g]');if(!b)return;grp=b.dataset.g;$('seg').querySelectorAll('button[data-g]').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+$('rs').onclick=()=>{$('q').value='';['fp','fc','fs','fa'].forEach(i=>$(i).value='');build();render()};
+$('cp').onclick=async()=>{
+ const t=last.map(([k,v])=>(k?k.toUpperCase()+'\n':'')+v.map(x=>'- '+x.n+' | '+x.a+', '+x.m+' | '+x.s+' | votación '+fmt(x.f[0])).join('\n')).join('\n\n');
+ try{await navigator.clipboard.writeText(t);$('cp').textContent='Copiado'}catch(e){$('cp').textContent='No se pudo copiar'}
+ setTimeout(()=>$('cp').textContent='Copiar listado',1800)};
+fetch('centros.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{
+ D=j.centros;D.forEach(x=>{x.k=norm([x.n,x.e,x.a,x.z,x.s,x.u,x.m].join(' '))});
+ const ps=[...new Set(D.map(x=>x.pv))].join(', ');
+ document.title='Visitas a centros de trabajo · '+ps;
+ $('sub').textContent=D.length+' centros con elecciones registradas ('+ps+'), desde '+fmt(D.reduce((m,x)=>x.f[x.f.length-1]<m?x.f[x.f.length-1]:m,'9999'))+'. Datos a '+fmt(j.generado)+'.';
+ init();render();
+}).catch(()=>{$('out').innerHTML='<div class="vacio">No se pudo cargar centros.json. Debe estar en la misma carpeta que esta página y servirse desde un servidor web.</div>'});
+</script>
+</body>
+</html>
